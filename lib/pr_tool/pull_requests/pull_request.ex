@@ -20,6 +20,6 @@ defmodule PrTool.PullRequests.PullRequest do
   def changeset(pull_request, attrs) do
     pull_request
     |> cast(attrs, [:title, :author, :reviewers, :commits, :comments, :changed_files, :additions, :deletions, :days_to_merge])
-    |> validate_required([:title, :author, :reviewers, :commits, :comments, :changed_files, :additions, :deletions, :days_to_merge])
+    |> validate_required([:title, :author, :reviewers, :commits, :comments, :changed_files, :additions, :deletions])
   end
 end
