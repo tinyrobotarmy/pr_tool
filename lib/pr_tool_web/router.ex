@@ -20,7 +20,8 @@ defmodule PrToolWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", PrToolWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", PrToolWeb do
+    pipe_through :api
+    resources "/pull_requests", PullRequestController, except: [:new, :edit]
+  end
 end
