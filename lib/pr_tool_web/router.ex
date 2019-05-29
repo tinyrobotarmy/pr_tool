@@ -16,7 +16,7 @@ defmodule PrToolWeb.Router do
   scope "/", PrToolWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/*path", PageController, :index
   end
 
   # Other scopes may use custom stacks.

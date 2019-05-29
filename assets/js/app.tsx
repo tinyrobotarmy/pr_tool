@@ -1,8 +1,9 @@
 // We need to import the CSS so that webpack will load it.
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
-import css from "../css/app.css"
 
+import '../css/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 // webpack automatically bundles all modules in your
 // entry points. Those entry points can be configured
 // in "webpack.config.js".
@@ -15,3 +16,10 @@ import "phoenix_html"
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
+
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import Root from './Root'
+// This code starts up the React app when it runs in a browser. It sets up the routing
+// configuration and injects the app into a DOM element.
+ReactDOM.render(<Root />, document.getElementById('react-app'))
