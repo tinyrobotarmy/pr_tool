@@ -11,8 +11,8 @@ export default class Root extends React.Component {
   public render(): JSX.Element {
     return (
       <>
-        <Header />
         <BrowserRouter>
+        <Header />
           <Switch>
             <Route exact path="/" component={HomePage} />
             <Route path="/pulls" component={ PullsPage } />

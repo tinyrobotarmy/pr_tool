@@ -5,6 +5,7 @@ import Main from '../components/Main'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface PullRequest {
+  id: number;
   title: string;
   author: string;
 }
@@ -25,7 +26,12 @@ export default class PullsPage extends React.Component<{}, PullsState> {
   }
 
   componentDidMount() {
-    fetch('http://localhost:4000/api/pull_requests/')
+    fetch('http://localhost:4000/api/pull_requests/', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',                  
+    }})
       .then((results) => {
         return results.json();
       })
@@ -69,7 +75,7 @@ export default class PullsPage extends React.Component<{}, PullsState> {
                 return (
                   <tr key={pull.id}>
                     <td>
-                      <Link to={`books/${pull.id}`}>{ pull.title }</Link>
+                      <Link to={`pulls/${pull.id}`}>{ pull.title }</Link>
                     </td>
                     <td>{ pull.author }</td>
                     <td className="actions">

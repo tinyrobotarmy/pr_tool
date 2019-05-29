@@ -13,15 +13,15 @@ defmodule PrToolWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", PrToolWeb do
-    pipe_through :browser
-
-    get "/*path", PageController, :index
-  end
-
   # Other scopes may use custom stacks.
   scope "/api", PrToolWeb do
     pipe_through :api
     resources "/pull_requests", PullRequestController, except: [:new, :edit]
+  end
+
+  scope "/", PrToolWeb do
+    pipe_through :browser
+
+    get "/*path", PageController, :index
   end
 end
