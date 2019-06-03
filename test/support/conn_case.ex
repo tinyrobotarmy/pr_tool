@@ -20,6 +20,7 @@ defmodule PrToolWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       alias PrToolWeb.Router.Helpers, as: Routes
+      alias PrTool.Factory
 
       # The default endpoint for testing
       @endpoint PrToolWeb.Endpoint

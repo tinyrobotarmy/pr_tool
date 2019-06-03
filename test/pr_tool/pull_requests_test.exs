@@ -2,79 +2,137 @@ defmodule PrTool.PullRequestsTest do
   use PrTool.DataCase
 
   alias PrTool.PullRequests
+  alias PrTool.PullRequests.PullRequest
 
-  describe "pull_requests" do
-    alias PrTool.PullRequests.PullRequest
+  @invalid_attrs %{additions: nil, author: nil, changed_files: nil, comments: nil, commits: nil, days_to_merge: nil, deletions: nil, reviewers: nil, title: nil}
 
-    @valid_attrs %{additions: 42, author: "some author", changed_files: 42, comments: 42, commits: 42, days_to_merge: 42, deletions: 42, reviewers: 42, title: "some title"}
-    @update_attrs %{additions: 43, author: "some updated author", changed_files: 43, comments: 43, commits: 43, days_to_merge: 43, deletions: 43, reviewers: 43, title: "some updated title"}
-    @invalid_attrs %{additions: nil, author: nil, changed_files: nil, comments: nil, commits: nil, days_to_merge: nil, deletions: nil, reviewers: nil, title: nil}
+  describe "list_pull_requests/0" do
+    setup [:single_pr]
 
-    def pull_request_fixture(attrs \\ %{}) do
-      {:ok, pull_request} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> PullRequests.create_pull_request()
+    test "returns all pull_requests", %{pr: pr} do
+      assert PullRequests.list_pull_requests() == [pr]
+    end
+  end
 
-      pull_request
+  describe "get_pull_request!/1" do
+    setup [:single_pr]
+
+    test "returns the pull_request with given id", %{pr: pr} do
+      assert PullRequests.get_pull_request!(pr.id) == pr
+    end
+  end
+
+  describe "create_pull_request/1" do
+    setup [:single_git_repo]
+
+    test "with valid data creates a pull_request", %{git_repo: git_repo} do
+      attrs = Map.merge(Factory.all_pull_request_attributes(), %{"git_repo_id" => git_repo.id})
+      assert {:ok, %PullRequest{} = pull_request} = PullRequests.create_pull_request(attrs)
+      assert pull_request.additions == attrs["additions"]
+      assert pull_request.author == attrs["author"]
+      assert pull_request.changed_files == attrs["changed_files"]
+      assert pull_request.comments == attrs["comments"]
+      assert pull_request.commits == attrs["commits"]
+      assert pull_request.days_to_merge == attrs["days_to_merge"]
+      assert pull_request.deletions == attrs["deletions"]
+      assert pull_request.reviewers == attrs["reviewers"]
+      assert pull_request.title == attrs["title"]
     end
 
-    test "list_pull_requests/0 returns all pull_requests" do
-      pull_request = pull_request_fixture()
-      assert PullRequests.list_pull_requests() == [pull_request]
-    end
-
-    test "get_pull_request!/1 returns the pull_request with given id" do
-      pull_request = pull_request_fixture()
-      assert PullRequests.get_pull_request!(pull_request.id) == pull_request
-    end
-
-    test "create_pull_request/1 with valid data creates a pull_request" do
-      assert {:ok, %PullRequest{} = pull_request} = PullRequests.create_pull_request(@valid_attrs)
-      assert pull_request.additions == 42
-      assert pull_request.author == "some author"
-      assert pull_request.changed_files == 42
-      assert pull_request.comments == 42
-      assert pull_request.commits == 42
-      assert pull_request.days_to_merge == 42
-      assert pull_request.deletions == 42
-      assert pull_request.reviewers == 42
-      assert pull_request.title == "some title"
-    end
-
-    test "create_pull_request/1 with invalid data returns error changeset" do
+    test "with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = PullRequests.create_pull_request(@invalid_attrs)
     end
+  end
 
-    test "update_pull_request/2 with valid data updates the pull_request" do
-      pull_request = pull_request_fixture()
-      assert {:ok, %PullRequest{} = pull_request} = PullRequests.update_pull_request(pull_request, @update_attrs)
-      assert pull_request.additions == 43
-      assert pull_request.author == "some updated author"
-      assert pull_request.changed_files == 43
-      assert pull_request.comments == 43
-      assert pull_request.commits == 43
-      assert pull_request.days_to_merge == 43
-      assert pull_request.deletions == 43
-      assert pull_request.reviewers == 43
-      assert pull_request.title == "some updated title"
+  describe "update_pull_request/2" do
+    setup [:single_pr]
+
+    test "with valid data updates the pull_request", %{pr: pr} do
+      attrs = Factory.all_pull_request_attributes()
+      assert {:ok, %PullRequest{} = pr} = PullRequests.update_pull_request(pr, attrs)
+      assert pr.additions == attrs["additions"]
+      assert pr.author == attrs["author"]
+      assert pr.changed_files == attrs["changed_files"]
+      assert pr.comments == attrs["comments"]
+      assert pr.commits == attrs["commits"]
+      assert pr.days_to_merge == attrs["days_to_merge"]
+      assert pr.deletions == attrs["deletions"]
+      assert pr.reviewers == attrs["reviewers"]
+      assert pr.title == attrs["title"]
     end
 
-    test "update_pull_request/2 with invalid data returns error changeset" do
-      pull_request = pull_request_fixture()
-      assert {:error, %Ecto.Changeset{}} = PullRequests.update_pull_request(pull_request, @invalid_attrs)
-      assert pull_request == PullRequests.get_pull_request!(pull_request.id)
+    test "with invalid data returns error changeset", %{pr: pr} do
+      assert {:error, %Ecto.Changeset{}} = PullRequests.update_pull_request(pr, @invalid_attrs)
+      assert pr == PullRequests.get_pull_request!(pr.id)
+    end
+  end
+
+  describe "delete_pull_request/1" do
+    setup [:single_pr]
+
+    test "deletes the pull_request", %{pr: pr} do
+      assert {:ok, %PullRequest{}} = PullRequests.delete_pull_request(pr)
+      assert_raise Ecto.NoResultsError, fn -> PullRequests.get_pull_request!(pr.id) end
+    end
+  end
+
+  describe "change_pull_request/1" do
+    setup [:single_pr]
+
+    test "returns a pull_request changeset", %{pr: pr} do
+      assert %Ecto.Changeset{} = PullRequests.change_pull_request(pr)
+    end
+  end
+
+  describe "as_time_series/1" do
+    setup [:three_prs]
+
+    test "series contains an entry for each month from the first", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+      series = PullRequests.as_time_series(git_repo.id)
+      assert 3 == Enum.count(series)
     end
 
-    test "delete_pull_request/1 deletes the pull_request" do
-      pull_request = pull_request_fixture()
-      assert {:ok, %PullRequest{}} = PullRequests.delete_pull_request(pull_request)
-      assert_raise Ecto.NoResultsError, fn -> PullRequests.get_pull_request!(pull_request.id) end
+    test "groups prs correctly", %{git_repo: git_repo} do
+      series = PullRequests.as_time_series(git_repo.id)
+      assert 1 == Enum.count(hd(Map.values(Enum.at(series,0))))
+      assert 0 == Enum.count(hd(Map.values(Enum.at(series,1))))
+      assert 2 == Enum.count(hd(Map.values(Enum.at(series,2))))
+    end
+  end
+
+  describe "process_for_average/1" do
+    setup [:three_prs]
+
+    test "series contains x with value of date", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+      series = git_repo.id
+        |> PullRequests.as_time_series()
+        |> PullRequests.process_for_average()
+      assert Timex.shift(pr_1.merged_at, months: 1) == hd(series).x
     end
 
-    test "change_pull_request/1 returns a pull_request changeset" do
-      pull_request = pull_request_fixture()
-      assert %Ecto.Changeset{} = PullRequests.change_pull_request(pull_request)
+    test "series contains y with average of days to merge", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+      series = git_repo.id
+        |> PullRequests.as_time_series()
+        |> PullRequests.process_for_average()
+      assert pr_1.days_to_merge == hd(series).y
     end
+  end
+
+  defp single_git_repo(_context) do
+    git_repo = Factory.create_git_repo()
+    [git_repo: git_repo]
+  end
+
+  defp single_pr(_context) do
+    pr = Factory.create_pull_request()
+    [pr: pr]
+  end
+
+  defp three_prs(_context) do
+    git_repo = Factory.create_git_repo
+    pr_1 = Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -3)})
+    pr_2 = Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -1)})
+    pr_3 = Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -1)})
+    [git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3]
   end
 end

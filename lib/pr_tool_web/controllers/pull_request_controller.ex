@@ -6,8 +6,8 @@ defmodule PrToolWeb.PullRequestController do
 
   action_fallback PrToolWeb.FallbackController
 
-  def index(conn, _params) do
-    pull_requests = PullRequests.list_pull_requests()
+  def index(conn, %{"git_repo_id" => git_repo_id}) do
+    pull_requests = PullRequests.list_pull_requests(git_repo_id)
     render(conn, "index.json", pull_requests: pull_requests)
   end
 

@@ -34,19 +34,20 @@ defmodule PrTool.MixProject do
   defp deps do
     [
       {:csv, "~> 2.3"},
-      {:httpoison, "~> 1.4"},
-      {:poison, "~> 3.1"},
-      {:timex, "~> 3.1"},
-      {:phoenix, "~> 1.4.5"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"},
+      {:faker, "~> 0.9", only: :test},
+      {:gettext, "~> 0.11"},
+      {:httpoison, "~> 1.4"},
+      {:jason, "~> 1.0"},
+      {:phoenix, "~> 1.4.5"},
+      {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:phoenix_pubsub, "~> 1.1"},
+      {:plug_cowboy, "~> 2.0"},
+      {:poison, "~> 3.1"},
+      {:postgrex, ">= 0.0.0"},
+      {:timex, "~> 3.1"},
     ]
   end
 

@@ -17,6 +17,7 @@ defmodule PrTool.DataCase do
   using do
     quote do
       alias PrTool.Repo
+      alias PrTool.Factory
 
       import Ecto
       import Ecto.Changeset

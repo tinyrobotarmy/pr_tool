@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import Header from './components/Header'
 import HomePage from './pages'
-import PullsPage from './pages/pulls';
+import RepoPage from './pages/Repo';
 
 export default class Root extends React.Component {
   public render(): JSX.Element {
@@ -14,8 +14,8 @@ export default class Root extends React.Component {
         <BrowserRouter>
         <Header />
           <Switch>
+            <Route exact path="/repos/:id" component={ RepoPage } />
             <Route exact path="/" component={HomePage} />
-            <Route path="/pulls" component={ PullsPage } />
           </Switch>
         </BrowserRouter>
       </>

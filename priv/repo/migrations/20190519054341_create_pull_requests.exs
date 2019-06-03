@@ -3,6 +3,7 @@ defmodule PrTool.Repo.Migrations.CreatePullRequests do
 
   def change do
     create table(:pull_requests) do
+      add :external_id, :integer
       add :title, :string
       add :author, :string
       add :reviewers, :integer
@@ -12,6 +13,11 @@ defmodule PrTool.Repo.Migrations.CreatePullRequests do
       add :additions, :integer
       add :deletions, :integer
       add :days_to_merge, :integer
+      add :created_at, :utc_datetime
+      add :closed_at, :utc_datetime
+      add :merged_at, :utc_datetime
+
+      add :git_repo_id, references(:git_repos)
 
       timestamps()
     end
