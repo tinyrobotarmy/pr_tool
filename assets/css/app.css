@@ -1,3 +1,15 @@
 /* This file is for your main application css. */
 
 /* @import "./phoenix.css"; */
+
+.sub-head {
+  color: #6c757d;
+}
+
+.cross {
+  background-color: #3e3e3e;
+  width: 90px;
+  height: 50px;
+  padding: 0.5em;
+  border-radius: 3px;
+}

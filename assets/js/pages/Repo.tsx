@@ -10,8 +10,8 @@ import {XYPlot, LineMarkSeries, VerticalGridLines, HorizontalGridLines, XAxis, Y
 import moment from 'moment'
 
 const MARGIN = {
-  left: 10,
-  right: 10,
+  left: 50,
+  right: 50,
   bottom: 100,
   top: 20
 };
@@ -91,28 +91,44 @@ export default class RepoPage extends React.Component<{}, RepoState> {
         <div className="row">
           <div className="col-sm-1"></div>
           <div className="col-sm-10">
-          <h2>Pull Request Data for { this.state.repo.name }</h2>
+            <h2>Pull Request Data for { this.state.repo.name }</h2>
+            <h5 className="sub-head">Rolling 1 month average of time to close a Pull Request</h5>
           </div>
+          <div className="col-sm-1"></div>
+        </div>
+        <div className="row">
+          <div className="col-sm-1"></div>
+          <div className="col-sm-10"></div>
           <div className="col-sm-1"></div>
         </div>
         <div className="row">
           <div className="col-sm-1"></div>
           <div className="col-sm-10">
             <XYPlot margin={MARGIN} height={400} width={800} onMouseLeave={this.onMouseLeave}>
-            <HorizontalGridLines style={{stroke: '#B7E9ED'}} />
-            <VerticalGridLines style={{stroke: '#B7E9ED'}} />
-            <XAxis title="Closed date"
+            <HorizontalGridLines />
+            <VerticalGridLines />
+            <XAxis
               tickLabelAngle={-45}
               tickTotal={this.state.tickCount}
               tickFormat={d => moment(d).format("MMM YY") }
               style={{
-                line: {stroke: '#ADDDE1'},
-                ticks: {stroke: '#ADDDE1'},
-                text: {stroke: 'none', fill: '#6b6b76', fontWeight: 600}
+                line: {stroke: '#8b8b8b'},
+                ticks: {stroke: '#8b8b8b'},
+                text: {stroke: 'none', fill: '#8b8b8b', fontWeight: 800}
               }} />
-            <YAxis title="Avg time to close" />
-            <LineMarkSeries getNull={d => d.y !== null} data={this.state.monthly_series} onNearestX={this.onNearestX}/>
-            <Crosshair values={this.state.crosshairValues} className="cross">
+            <YAxis title="Avg time to close"
+              style={{
+                line: {stroke: '#8b8b8b'},
+                ticks: {stroke: '#8b8b8b'},
+                text: {stroke: 'none', fill: '#8b8b8b', fontWeight: 800}
+              }}
+            />
+            <LineMarkSeries curve={'curveMonotoneX'}
+              color={'#212ca5'}
+              getNull={d => d.y !== null} 
+              data={this.state.monthly_series} onNearestX={this.onNearestX}
+            />
+            <Crosshair values={this.state.crosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
               <div>
                 <p>Avg Time: {this.state.crosshairValues[0].y}</p>
                 <p>On: {moment(this.state.crosshairValues[0].x).format("MMM YY")}</p>
