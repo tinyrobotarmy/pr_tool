@@ -23,10 +23,14 @@ defmodule PrToolWeb.GitRepoController do
 
   def show(conn, %{"id" => id}) do
     git_repo = GitRepos.get_git_repo!(id)
-    series = git_repo.id
+    merged_series = git_repo.id
       |> PullRequests.as_time_series()
-      |> PullRequests.process_for_average()
-    render(conn, "show.json", git_repo: git_repo, series: series)
+      |> PullRequests.process_for_average(:days_to_merge)
+
+    changed_files_series = git_repo.id
+      |> PullRequests.as_time_series()
+      |> PullRequests.process_for_average(:changed_files)
+    render(conn, "show.json", git_repo: git_repo, merged_series: merged_series, changed_files_series: changed_files_series)
   end
 
   def update(conn, %{"id" => id, "git_repo" => git_repo_params}) do

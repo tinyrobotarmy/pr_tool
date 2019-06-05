@@ -61,17 +61,17 @@ defmodule PrTool.PullRequests do
     end
   end
 
-  def process_for_average(time_series) do
+  def process_for_average(time_series, field) do
     Enum.map(time_series, fn(item) ->
       keys = Map.keys(item)
       values = Map.values(item)
-      %{x: hd(keys), y: average(hd(values))}
+      %{x: hd(keys), y: average(hd(values), field)}
     end)
   end
 
-  defp average([]), do: nil
-  defp average(pulls) do
-    total = Enum.reduce(pulls, 0, fn(pull, acc) -> pull.days_to_merge + acc end)
+  defp average([], _field), do: nil
+  defp average(pulls, field) do
+    total = Enum.reduce(pulls, 0, fn(pull, acc) -> Map.get(pull, field) + acc end)
     total / Enum.count(pulls)
   end
 
