@@ -52,7 +52,7 @@ defmodule PrTool.PullRequests do
 
   defp keep_grouping(pulls, date, acc) do
     {merged_b4, remaining} = Enum.split_with(pulls, fn(pull) -> Timex.before?(pull.merged_at, date) end)
-    grouped = Enum.concat(acc,[%{date => merged_b4}])
+    grouped = merge_into_series(acc, merged_b4, date)
     case Enum.empty?(remaining) do
       true ->
         grouped
@@ -60,6 +60,12 @@ defmodule PrTool.PullRequests do
         keep_grouping(remaining, Timex.shift(date, months: 1), grouped)
     end
   end
+
+  defp merge_into_series(series, [], _date), do: series
+  defp merge_into_series(series, new_item, date) do
+    Enum.concat(series,[%{date => new_item}])
+  end
+
 
   def process_for_average(time_series, field) do
     Enum.map(time_series, fn(item) ->

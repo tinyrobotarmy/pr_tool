@@ -87,30 +87,29 @@ defmodule PrTool.PullRequestsTest do
   describe "as_time_series/1" do
     setup [:three_prs]
 
-    test "series contains an entry for each month from the first", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+    test "series contains an entry for each month with an item in it from the first", %{git_repo: git_repo} do
       series = PullRequests.as_time_series(git_repo.id)
-      assert 3 == Enum.count(series)
+      assert 2 == Enum.count(series)
     end
 
     test "groups prs correctly", %{git_repo: git_repo} do
       series = PullRequests.as_time_series(git_repo.id)
       assert 1 == Enum.count(hd(Map.values(Enum.at(series,0))))
-      assert 0 == Enum.count(hd(Map.values(Enum.at(series,1))))
-      assert 2 == Enum.count(hd(Map.values(Enum.at(series,2))))
+      assert 2 == Enum.count(hd(Map.values(Enum.at(series,1))))
     end
   end
 
   describe "process_for_average/1 on days_to_merge" do
     setup [:three_prs]
 
-    test "series contains x with value of date", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+    test "series contains x with value of date", %{git_repo: git_repo, pr_1: pr_1} do
       series = git_repo.id
         |> PullRequests.as_time_series()
         |> PullRequests.process_for_average(:days_to_merge)
       assert Timex.shift(pr_1.merged_at, months: 1) == hd(series).x
     end
 
-    test "series contains y with average of days to merge", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+    test "series contains y with average of days to merge", %{git_repo: git_repo, pr_1: pr_1} do
       series = git_repo.id
         |> PullRequests.as_time_series()
         |> PullRequests.process_for_average(:days_to_merge)
@@ -121,14 +120,14 @@ defmodule PrTool.PullRequestsTest do
   describe "process_for_average/1 on changed_files" do
     setup [:three_prs]
 
-    test "series contains x with value of date", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+    test "series contains x with value of date", %{git_repo: git_repo, pr_1: pr_1} do
       series = git_repo.id
         |> PullRequests.as_time_series()
         |> PullRequests.process_for_average(:changed_files)
       assert Timex.shift(pr_1.merged_at, months: 1) == hd(series).x
     end
 
-    test "series contains y with average of files changed", %{git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3} do
+    test "series contains y with average of files changed", %{git_repo: git_repo, pr_1: pr_1} do
       series = git_repo.id
         |> PullRequests.as_time_series()
         |> PullRequests.process_for_average(:changed_files)
@@ -149,8 +148,8 @@ defmodule PrTool.PullRequestsTest do
   defp three_prs(_context) do
     git_repo = Factory.create_git_repo
     pr_1 = Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -3)})
-    pr_2 = Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -1)})
-    pr_3 = Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -1)})
-    [git_repo: git_repo, pr_1: pr_1, pr_2: pr_2, pr_3: pr_3]
+    Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -1)})
+    Factory.create_pull_request(%{"git_repo_id" => git_repo.id, "merged_at" => Timex.shift(DateTime.utc_now(), months: -1)})
+    [git_repo: git_repo, pr_1: pr_1]
   end
 end

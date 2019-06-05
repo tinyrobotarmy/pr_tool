@@ -32,6 +32,7 @@ interface RepoState {
   repo: Repo,
   tickCount: number,
   changedFilesMax: number,
+  mergedMax: number,
   merged_series: Array<SeriesItem>,
   changed_files_series: Array<SeriesItem>,
   mergedCrosshairValues: Array<any>,
@@ -42,6 +43,7 @@ const initialState = {
   repo: {id:0, name: '', url: '', },
   tickCount: 0,
   changedFilesMax: 0,
+  mergedMax: 0,
   merged_series: [],
   changed_files_series: [],
   mergedCrosshairValues: [{x:null, y: null}], 
@@ -76,6 +78,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
           repo: result.data,
           tickCount: result.data.length,
           changedFilesMax: this.getYMax(result.data.changed_files_series),
+          mergedMax: this.getYMax(result.data.merged_series),
           merged_series: result.data.merged_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
           changed_files_series: result.data.changed_files_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
         })
@@ -128,7 +131,9 @@ export default class RepoPage extends React.Component<{}, RepoState> {
         </div>
         <div className="row">
           <div className="col-sm-6">
-            <FlexibleWidthXYPlot margin={MARGIN} height={400} onMouseLeave={this.onMouseLeaveMerged}>
+            <FlexibleWidthXYPlot margin={MARGIN} height={400} 
+              onMouseLeave={this.onMouseLeaveMerged}
+              yDomain={[0, this.state.mergedMax]}>
               <HorizontalGridLines />
               <VerticalGridLines />
               <XAxis
