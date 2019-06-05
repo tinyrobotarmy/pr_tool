@@ -27,8 +27,10 @@ defmodule PrToolWeb.GitRepoController do
     merged_series = PullRequests.process_for_average(series, :days_to_merge)
     changed_files_series = PullRequests.process_for_average(series, :changed_files)
     changes_series = PullRequests.process_field_pair_for_average(series, :additions, :deletions)
+    comments_series = PullRequests.process_for_average(series, :comments)
+    reviewers_series = PullRequests.process_for_average(series, :reviewers)
     render(conn, "show.json", git_repo: git_repo, merged_series: merged_series, changed_files_series: changed_files_series,
-           changes_series: changes_series)
+           changes_series: changes_series, comments_series: comments_series, reviewers_series: reviewers_series)
   end
 
   def update(conn, %{"id" => id, "git_repo" => git_repo_params}) do

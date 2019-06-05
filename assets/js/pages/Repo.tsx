@@ -34,26 +34,34 @@ interface RepoState {
   changedFilesMax: number,
   mergedMax: number,
   changesMax: number,
+  commentsMax: number,
   merged_series: Array<SeriesItem>,
   changed_files_series: Array<SeriesItem>,
   changes_series: Array<SeriesItem>,
+  comments_series: Array<SeriesItem>,
+  reviewers_series: Array<SeriesItem>,
   mergedCrosshairValues: Array<any>,
   filesCrosshairValues: Array<any>,
   changesCrosshairValues: Array<any>,
+  commentsCrosshairValues: Array<any>,
 }
 
-const initialState = { 
+const initialState = {
   repo: {id:0, name: '', url: '', },
   tickCount: 0,
   changedFilesMax: 0,
   changesMax: 0,
   mergedMax: 0,
+  commentsMax: 0,
   merged_series: [],
   changed_files_series: [],
   changes_series: [],
-  mergedCrosshairValues: [{x:null, y: null}], 
-  filesCrosshairValues: [{x:null, y: null}], 
-  changesCrosshairValues: [{x:null, y: null}], 
+  comments_series: [],
+  reviewers_series: [],
+  mergedCrosshairValues: [{x:null, y: null}],
+  filesCrosshairValues: [{x:null, y: null}],
+  changesCrosshairValues: [{x:null, y: null}],
+  commentsCrosshairValues: [{x:null, y: null}],
 }
 
 export default class RepoPage extends React.Component<{}, RepoState> {
@@ -68,6 +76,8 @@ export default class RepoPage extends React.Component<{}, RepoState> {
     this.onNearestXFiles = this.onNearestXFiles.bind(this);
     this.onMouseLeaveChanges = this.onMouseLeaveChanges.bind(this);
     this.onNearestXChanges = this.onNearestXChanges.bind(this);
+    this.onMouseLeaveComments = this.onMouseLeaveComments.bind(this);
+    this.onNearestXComments = this.onNearestXComments.bind(this);
   }
 
   componentDidMount() {
@@ -76,7 +86,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
-        'Accept': 'application/json',                  
+        'Accept': 'application/json',
     }})
       .then((results) => {
         return results.json();
@@ -88,9 +98,12 @@ export default class RepoPage extends React.Component<{}, RepoState> {
           changedFilesMax: this.getYMax(result.data.changed_files_series),
           mergedMax: this.getYMax(result.data.merged_series),
           changesMax: this.getYMax(result.data.changes_series),
+          commentsMax: Math.max(this.getYMax(result.data.comments_series), this.getYMax(result.data.reviewers_series)),
           merged_series: result.data.merged_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
           changed_files_series: result.data.changed_files_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
           changes_series: result.data.changes_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
+          comments_series: result.data.comments_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
+          reviewers_series: result.data.reviewers_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
         })
       })
   }
@@ -122,6 +135,15 @@ export default class RepoPage extends React.Component<{}, RepoState> {
     });
   }
 
+  onMouseLeaveComments(){
+    this.setState({commentsCrosshairValues: [{x:null, y: null}]});
+  }
+  onNearestXComments(value, {event, innerX, index}) {
+    this.setState({
+      commentsCrosshairValues: [value]
+    });
+  }
+
   getYMax(series: Array<any>) {
     if(series.length == 0) {
       return 0
@@ -142,15 +164,15 @@ export default class RepoPage extends React.Component<{}, RepoState> {
         </div>
         <div className="row">
           <div className="col-sm-6">
-            <h5 className="sub-head">Rolling 1 month average of time to close a Pull Request</h5>
+            <h5 className="sub-head">Rolling 1 month average of time to close</h5>
           </div>
           <div className="col-sm-6">
-            <h5 className="sub-head">Rolling 1 month average of files in a Pull Request</h5>
+            <h5 className="sub-head">Rolling 1 month average of files</h5>
           </div>
         </div>
         <div className="row">
           <div className="col-sm-6">
-            <FlexibleWidthXYPlot margin={MARGIN} height={400} 
+            <FlexibleWidthXYPlot margin={MARGIN} height={400}
               onMouseLeave={this.onMouseLeaveMerged}
               yDomain={[0, this.state.mergedMax]}>
               <HorizontalGridLines />
@@ -173,7 +195,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
               />
               <LineMarkSeries curve={'curveMonotoneX'}
                 color={'#212ca5'}
-                getNull={d => d.y !== null} 
+                getNull={d => d.y !== null}
                 data={this.state.merged_series} onNearestX={this.onNearestXMerged}
               />
               <Crosshair values={this.state.mergedCrosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
@@ -185,7 +207,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
             </FlexibleWidthXYPlot>
           </div>
           <div className="col-sm-6">
-          <FlexibleWidthXYPlot margin={MARGIN} height={400} 
+          <FlexibleWidthXYPlot margin={MARGIN} height={400}
             onMouseLeave={this.onMouseLeaveFiles}
             yDomain={[0, this.state.changedFilesMax]}>
               <HorizontalGridLines />
@@ -207,7 +229,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
                 }}
               />
               <LineMarkSeries curve={'curveMonotoneX'}
-                getNull={d => d.y !== null} 
+                getNull={d => d.y !== null}
                 data={this.state.changed_files_series} onNearestX={this.onNearestXFiles}
               />
               <Crosshair values={this.state.filesCrosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
@@ -221,14 +243,15 @@ export default class RepoPage extends React.Component<{}, RepoState> {
         </div>
         <div className="row">
           <div className="col-sm-6">
-            <h5 className="sub-head">Rolling 1 month average of changes in a Pull Request (additions and deletions)</h5>
+            <h5 className="sub-head">Rolling 1 month average of changes (additions and deletions)</h5>
           </div>
           <div className="col-sm-6">
+          <h5 className="sub-head">Rolling 1 month average of comments and reviewers</h5>
           </div>
         </div>
         <div className="row">
           <div className="col-sm-6">
-            <FlexibleWidthXYPlot margin={MARGIN} height={400} 
+            <FlexibleWidthXYPlot margin={MARGIN} height={400}
               onMouseLeave={this.onMouseLeaveChanges}
               yDomain={[0, this.state.changesMax]}>
               <HorizontalGridLines />
@@ -242,7 +265,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
                   ticks: {stroke: '#8b8b8b'},
                   text: {stroke: 'none', fill: '#8b8b8b', fontWeight: 800}
                 }} />
-              <YAxis title="Avg time to close"
+              <YAxis title="Avg count of changes"
                 style={{
                   line: {stroke: '#8b8b8b'},
                   ticks: {stroke: '#8b8b8b'},
@@ -251,7 +274,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
               />
               <LineMarkSeries curve={'curveMonotoneX'}
                 color={'#e54a46'}
-                getNull={d => d.y !== null} 
+                getNull={d => d.y !== null}
                 data={this.state.changes_series} onNearestX={this.onNearestXChanges}
               />
               <Crosshair values={this.state.changesCrosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
@@ -262,7 +285,46 @@ export default class RepoPage extends React.Component<{}, RepoState> {
               </Crosshair>
             </FlexibleWidthXYPlot>
           </div>
-          <div className="col-sm-6"></div>
+          <div className="col-sm-6">
+            <FlexibleWidthXYPlot margin={MARGIN} height={400}
+              onMouseLeave={this.onMouseLeaveComments}
+              yDomain={[0, this.state.commentsMax]}>
+              <HorizontalGridLines />
+              <VerticalGridLines />
+              <XAxis
+                tickLabelAngle={-45}
+                tickTotal={this.state.tickCount}
+                tickFormat={d => moment(d).format("MMM YY") }
+                style={{
+                  line: {stroke: '#8b8b8b'},
+                  ticks: {stroke: '#8b8b8b'},
+                  text: {stroke: 'none', fill: '#8b8b8b', fontWeight: 800}
+                }} />
+              <YAxis title="Avg count of comments"
+                style={{
+                  line: {stroke: '#8b8b8b'},
+                  ticks: {stroke: '#8b8b8b'},
+                  text: {stroke: 'none', fill: '#8b8b8b', fontWeight: 800}
+                }}
+              />
+              <LineMarkSeries curve={'curveMonotoneX'}
+                color={'#21a03a'}
+                getNull={d => d.y !== null}
+                data={this.state.comments_series} onNearestX={this.onNearestXComments}
+              />
+              <LineMarkSeries curve={'curveMonotoneX'}
+                color={'#eed731'}
+                getNull={d => d.y !== null}
+                data={this.state.reviewers_series} onNearestX={this.onNearestXComments}
+              />
+              <Crosshair values={this.state.commentsCrosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
+                <div>
+                  <p>Avg Time: {this.state.commentsCrosshairValues[0].y}</p>
+                  <p>On: {moment(this.state.commentsCrosshairValues[0].x).format("MMM YY")}</p>
+                </div>
+              </Crosshair>
+            </FlexibleWidthXYPlot>
+          </div>
         </div>
       </Main>
     )
