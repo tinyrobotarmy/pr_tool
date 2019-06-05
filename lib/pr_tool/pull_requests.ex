@@ -81,6 +81,20 @@ defmodule PrTool.PullRequests do
     total / Enum.count(pulls)
   end
 
+  def process_field_pair_for_average(time_series, field_1, field_2) do
+    Enum.map(time_series, fn(item) ->
+      keys = Map.keys(item)
+      values = Map.values(item)
+      %{x: hd(keys), y: average(hd(values), field_1, field_2)}
+    end)
+  end
+
+  defp average([], _field_1, _field_2), do: nil
+  defp average(pulls, field_1, field_2) do
+    total = Enum.reduce(pulls, 0, fn(pull, acc) -> Map.get(pull, field_1) + Map.get(pull, field_2) + acc end)
+    total / Enum.count(pulls)
+  end
+
   @doc """
   Gets a single pull_request.
 

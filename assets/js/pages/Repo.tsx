@@ -33,21 +33,27 @@ interface RepoState {
   tickCount: number,
   changedFilesMax: number,
   mergedMax: number,
+  changesMax: number,
   merged_series: Array<SeriesItem>,
   changed_files_series: Array<SeriesItem>,
+  changes_series: Array<SeriesItem>,
   mergedCrosshairValues: Array<any>,
   filesCrosshairValues: Array<any>,
+  changesCrosshairValues: Array<any>,
 }
 
 const initialState = { 
   repo: {id:0, name: '', url: '', },
   tickCount: 0,
   changedFilesMax: 0,
+  changesMax: 0,
   mergedMax: 0,
   merged_series: [],
   changed_files_series: [],
+  changes_series: [],
   mergedCrosshairValues: [{x:null, y: null}], 
   filesCrosshairValues: [{x:null, y: null}], 
+  changesCrosshairValues: [{x:null, y: null}], 
 }
 
 export default class RepoPage extends React.Component<{}, RepoState> {
@@ -60,6 +66,8 @@ export default class RepoPage extends React.Component<{}, RepoState> {
     this.onNearestXMerged = this.onNearestXMerged.bind(this);
     this.onMouseLeaveFiles = this.onMouseLeaveFiles.bind(this);
     this.onNearestXFiles = this.onNearestXFiles.bind(this);
+    this.onMouseLeaveChanges = this.onMouseLeaveChanges.bind(this);
+    this.onNearestXChanges = this.onNearestXChanges.bind(this);
   }
 
   componentDidMount() {
@@ -79,8 +87,10 @@ export default class RepoPage extends React.Component<{}, RepoState> {
           tickCount: result.data.length,
           changedFilesMax: this.getYMax(result.data.changed_files_series),
           mergedMax: this.getYMax(result.data.merged_series),
+          changesMax: this.getYMax(result.data.changes_series),
           merged_series: result.data.merged_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
           changed_files_series: result.data.changed_files_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
+          changes_series: result.data.changes_series.map(el => ({x: new Date(el.x), y: el.y.toFixed(2)})),
         })
       })
   }
@@ -100,6 +110,15 @@ export default class RepoPage extends React.Component<{}, RepoState> {
   onNearestXFiles(value, {event, innerX, index}) {
     this.setState({
       filesCrosshairValues: [value]
+    });
+  }
+
+  onMouseLeaveChanges(){
+    this.setState({changesCrosshairValues: [{x:null, y: null}]});
+  }
+  onNearestXChanges(value, {event, innerX, index}) {
+    this.setState({
+      changesCrosshairValues: [value]
     });
   }
 
@@ -199,6 +218,51 @@ export default class RepoPage extends React.Component<{}, RepoState> {
               </Crosshair>
             </FlexibleWidthXYPlot>
           </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-6">
+            <h5 className="sub-head">Rolling 1 month average of changes in a Pull Request (additions and deletions)</h5>
+          </div>
+          <div className="col-sm-6">
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-6">
+            <FlexibleWidthXYPlot margin={MARGIN} height={400} 
+              onMouseLeave={this.onMouseLeaveChanges}
+              yDomain={[0, this.state.changesMax]}>
+              <HorizontalGridLines />
+              <VerticalGridLines />
+              <XAxis
+                tickLabelAngle={-45}
+                tickTotal={this.state.tickCount}
+                tickFormat={d => moment(d).format("MMM YY") }
+                style={{
+                  line: {stroke: '#8b8b8b'},
+                  ticks: {stroke: '#8b8b8b'},
+                  text: {stroke: 'none', fill: '#8b8b8b', fontWeight: 800}
+                }} />
+              <YAxis title="Avg time to close"
+                style={{
+                  line: {stroke: '#8b8b8b'},
+                  ticks: {stroke: '#8b8b8b'},
+                  text: {stroke: 'none', fill: '#8b8b8b', fontWeight: 800}
+                }}
+              />
+              <LineMarkSeries curve={'curveMonotoneX'}
+                color={'#e54a46'}
+                getNull={d => d.y !== null} 
+                data={this.state.changes_series} onNearestX={this.onNearestXChanges}
+              />
+              <Crosshair values={this.state.changesCrosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
+                <div>
+                  <p>Avg Time: {this.state.changesCrosshairValues[0].y}</p>
+                  <p>On: {moment(this.state.changesCrosshairValues[0].x).format("MMM YY")}</p>
+                </div>
+              </Crosshair>
+            </FlexibleWidthXYPlot>
+          </div>
+          <div className="col-sm-6"></div>
         </div>
       </Main>
     )
