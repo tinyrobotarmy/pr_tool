@@ -46,6 +46,7 @@ defmodule PrToolWeb.GitRepoView do
       title: pull.title,
       author: pull.author,
       days_to_merge: pull.days_to_merge,
+      changed_files: pull.changed_files,
       closed_at: pull.closed_at,
       merged_at: pull.merged_at,
     }

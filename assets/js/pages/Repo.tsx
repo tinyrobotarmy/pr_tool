@@ -24,6 +24,7 @@ interface SeriesItem {
 interface PullRequest {
   external_id: number;
   days_to_merge: number;
+  changed_files: number;
   closed_at: Date;
   merged_at: Date;
   title: string;
@@ -164,6 +165,12 @@ export default class RepoPage extends React.Component<{}, RepoState> {
     return max
   }
 
+  avg(array: Array<{PullRequest}>, field: any) : String {
+    let sum = array.reduce((a, b) => a + (b[field] || 0), 0)
+    let unrounded = sum / array.length
+    return unrounded.toFixed(2)
+  }
+
   public render(): JSX.Element {
     return (
       <Main>
@@ -184,9 +191,9 @@ export default class RepoPage extends React.Component<{}, RepoState> {
             <dt className="col-sm-3">Pull Requests still open</dt>
             <dd className="col-sm-9">{this.state.repo.pull_requests.filter(pull => pull.closed_at == null).length}</dd>
             <dt className="col-sm-3">Total avg time to merge</dt>
-            <dd className="col-sm-9"></dd>
-            <dt className="col-sm-3">Total avg time to close</dt>
-            <dd className="col-sm-9"></dd>
+            <dd className="col-sm-9">{ this.avg(this.state.repo.pull_requests, "days_to_merge") }</dd>
+            <dt className="col-sm-3">Total avg files changed</dt>
+            <dd className="col-sm-9">{ this.avg(this.state.repo.pull_requests, "changed_files") }</dd>
           </dl>
         </div>
         <div className="col-sm-1"></div>
