@@ -21,10 +21,20 @@ interface SeriesItem {
   y: number;
 }
 
+interface PullRequest {
+  external_id: number;
+  days_to_merge: number;
+  closed_at: Date;
+  merged_at: Date;
+  title: string;
+  author: string;
+}
+
 interface Repo {
   id: number;
   name: string;
   url: string;
+  pull_requests: Array<PullRequest>;
 }
 
 // Interface for the Counter component state
@@ -47,7 +57,7 @@ interface RepoState {
 }
 
 const initialState = {
-  repo: {id:0, name: '', url: '', },
+  repo: {id:0, name: '', url: '', pull_requests: []},
   tickCount: 0,
   changedFilesMax: 0,
   changesMax: 0,
@@ -159,8 +169,27 @@ export default class RepoPage extends React.Component<{}, RepoState> {
       <Main>
         <div className="row">
           <div className="col-sm-1"></div>
-          <div className="col-sm-10"><h2>Pull Request Data for { this.state.repo.name }</h2></div>
+          <div className="col-sm-10">
+            <h2>Pull Request Data for { this.state.repo.name }</h2>
+            <p>Summary details</p>
+          </div>
           <div className="col-sm-1"></div>
+        </div>
+        <div className="row">
+        <div className="col-sm-1"></div>
+        <div className="col-sm-10">
+          <dl className="row">
+            <dt className="col-sm-3">Total Pull Requests</dt>
+            <dd className="col-sm-9">{this.state.repo.pull_requests.length}</dd>
+            <dt className="col-sm-3">Pull Requests still open</dt>
+            <dd className="col-sm-9">{this.state.repo.pull_requests.filter(pull => pull.closed_at == null).length}</dd>
+            <dt className="col-sm-3">Total avg time to merge</dt>
+            <dd className="col-sm-9"></dd>
+            <dt className="col-sm-3">Total avg time to close</dt>
+            <dd className="col-sm-9"></dd>
+          </dl>
+        </div>
+        <div className="col-sm-1"></div>
         </div>
         <div className="row">
           <div className="col-sm-6">
@@ -279,7 +308,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
               />
               <Crosshair values={this.state.changesCrosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
                 <div>
-                  <p>Avg Time: {this.state.changesCrosshairValues[0].y}</p>
+                  <p>Changes: {this.state.changesCrosshairValues[0].y}</p>
                   <p>On: {moment(this.state.changesCrosshairValues[0].x).format("MMM YY")}</p>
                 </div>
               </Crosshair>
@@ -315,11 +344,11 @@ export default class RepoPage extends React.Component<{}, RepoState> {
               <LineMarkSeries curve={'curveMonotoneX'}
                 color={'#eed731'}
                 getNull={d => d.y !== null}
-                data={this.state.reviewers_series} onNearestX={this.onNearestXComments}
+                data={this.state.reviewers_series}
               />
               <Crosshair values={this.state.commentsCrosshairValues} className={'cross'} style={{line:{background: '#3e3e3e'}}}>
                 <div>
-                  <p>Avg Time: {this.state.commentsCrosshairValues[0].y}</p>
+                  <p>Comments: {this.state.commentsCrosshairValues[0].y}</p>
                   <p>On: {moment(this.state.commentsCrosshairValues[0].x).format("MMM YY")}</p>
                 </div>
               </Crosshair>

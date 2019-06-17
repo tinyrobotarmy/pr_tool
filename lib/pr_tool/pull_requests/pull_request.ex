@@ -26,9 +26,9 @@ defmodule PrTool.PullRequests.PullRequest do
   end
 
   @required_fields [:external_id, :title, :author, :reviewers, :commits, :comments, :changed_files, :additions, :deletions,
-                    :git_repo_id, :created_at, :closed_at, :merged_at]
+                    :git_repo_id, :created_at]
 
-  @optional_fields [:days_to_merge]
+  @optional_fields [:days_to_merge, :merged_at, :closed_at]
 
   @doc false
   def changeset(%PullRequest{} = pull_request, attrs) do

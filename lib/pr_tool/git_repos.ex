@@ -35,7 +35,13 @@ defmodule PrTool.GitRepos do
       ** (Ecto.NoResultsError)
 
   """
-  def get_git_repo!(id), do: Repo.get!(GitRepo, id)
+  def get_git_repo!(id) do
+    GitRepo
+    |> Repo.get!(id)
+    |> Repo.preload([:pull_requests])
+  end
+
+  def get_git_repo_by_name(name), do: Repo.get_by(GitRepo, name: name)
 
   @doc """
   Creates a git_repo.

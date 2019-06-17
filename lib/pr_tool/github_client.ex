@@ -33,7 +33,7 @@ defmodule PrTool.GithubClient do
   end
 
   defp get_opts(username, password) do
-    [hackney: [:insecure, basic_auth: {username, password}]]
+    [hackney: [:insecure, basic_auth: {username, password}, timeout: 50_000, recv_timeout: 50_000]]
   end
 
 end

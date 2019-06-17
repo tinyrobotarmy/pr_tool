@@ -11,16 +11,21 @@ defmodule Mix.Tasks.Load do
 
     git_repo = args
     |> hd
-    |> save_repo
+    |> find_or_save_repo
 
     git_repo
     |> GithubClient.get_pulls(username, password)
     |> Enum.each(&create_pr(&1, username, password, git_repo))
   end
 
-  defp save_repo(repo_name) do
-    {:ok, git_repo} = GitRepos.create_git_repo(%{name: repo_name, url: repo_name})
-    git_repo
+  defp find_or_save_repo(repo_name) do
+    case GitRepos.get_git_repo_by_name(repo_name) do
+      git_repo -> git_repo
+      nil ->
+        {:ok, git_repo} = GitRepos.create_git_repo(%{name: repo_name, url: repo_name})
+        git_repo
+    end
+
   end
 
   defp create_pr(shallow_pr, username, password, git_repo) do
@@ -42,7 +47,7 @@ defmodule Mix.Tasks.Load do
       labels: FormatHelper.label_names(pull),
       reviewers: Enum.count(pull.requested_reviewers),
       commits: pull.commits,
-      comments: pull.comments,
+      comments: pull.comments + pull.review_comments,
       changed_files: pull.changed_files,
       additions: pull.additions,
       deletions: pull.deletions,
