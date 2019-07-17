@@ -17,7 +17,7 @@ defmodule PrTool.Repo.Migrations.CreatePullRequests do
       add :closed_at, :utc_datetime
       add :merged_at, :utc_datetime
 
-      add :git_repo_id, references(:git_repos)
+      add :git_repo_id, references(:git_repos, on_delete: :delete_all)
 
       timestamps()
     end
