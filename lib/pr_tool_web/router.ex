@@ -18,7 +18,7 @@ defmodule PrToolWeb.Router do
     pipe_through :api
 
     resources "/git_repos", GitRepoController, except: [:new, :edit] do
-      resources "/pull_requests", PullRequestController, except: [:new, :edit]
+      resources "/pull_requests", PullRequestController, only: [:index, :show]
     end
   end
 

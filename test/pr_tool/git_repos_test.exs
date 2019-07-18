@@ -6,7 +6,6 @@ defmodule PrTool.GitReposTest do
   describe "git_repos" do
     alias PrTool.GitRepos.GitRepo
 
-    @update_attrs %{name: "some updated name", url: "some updated url"}
     @invalid_attrs %{name: nil, url: nil}
 
     def git_repo_fixture(attrs \\ %{}) do
@@ -14,7 +13,7 @@ defmodule PrTool.GitReposTest do
     end
 
     test "list_git_repos/0 returns all git_repos" do
-      git_repo = git_repo_fixture()
+      git_repo_fixture()
       assert Enum.count(GitRepos.list_git_repos()) == 1
     end
 
