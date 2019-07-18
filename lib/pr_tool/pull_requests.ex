@@ -46,6 +46,7 @@ defmodule PrTool.PullRequests do
       order_by: [asc: pr.merged_at]
   end
 
+  defp group_by_month([]), do: []
   defp group_by_month(pulls) do
     keep_grouping(pulls, Timex.shift(hd(pulls).merged_at, months: 1), [])
   end

@@ -17,7 +17,7 @@ defmodule PrToolWeb.GitRepoController do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.git_repo_path(conn, :show, git_repo))
-      |> render("show.json", git_repo: git_repo, series: [])
+      |> render("summary.json", git_repo: git_repo)
     end
   end
 
@@ -37,7 +37,7 @@ defmodule PrToolWeb.GitRepoController do
     git_repo = GitRepos.get_git_repo!(id)
 
     with {:ok, %GitRepo{} = git_repo} <- GitRepos.update_git_repo(git_repo, git_repo_params) do
-      render(conn, "show.json", git_repo: git_repo)
+      render(conn, "summary.json", git_repo: git_repo)
     end
   end
 

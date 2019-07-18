@@ -8,9 +8,6 @@ defmodule PrToolWeb.GitRepoView do
     }
   end
 
-  def git_repos_json([]), do: []
-  def git_repos_json(git_repos), do: Enum.map(git_repos, &git_repo_summary_json/1)
-
   def render("show.json", %{git_repo: git_repo, merged_series: merged_series, changed_files_series: changed_files_series,
                             changes_series: changes_series, comments_series: comments_series,
                             reviewers_series: reviewers_series}) do
@@ -28,6 +25,13 @@ defmodule PrToolWeb.GitRepoView do
       }
     }
   end
+
+  def render("summary.json", %{git_repo: git_repo}) do
+    %{data: %{id: git_repo.id}}
+  end
+
+  def git_repos_json([]), do: []
+  def git_repos_json(git_repos), do: Enum.map(git_repos, &git_repo_summary_json/1)
 
   def git_repo_summary_json(git_repo) do
     %{
