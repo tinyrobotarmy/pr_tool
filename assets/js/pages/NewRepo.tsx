@@ -8,7 +8,9 @@ import {FormInput, FormTextArea} from '../forms'
 
 const initialState = {
   name: '',
-  url: ''
+  url: '',
+  username: '',
+  password: ''
 }
 
 export default class NewRepoPage extends React.Component<{}, RepoState> {
@@ -46,6 +48,8 @@ export default class NewRepoPage extends React.Component<{}, RepoState> {
           git_repo: {
             name: this.state.name,
             url: this.state.url,
+            username: this.state.username,
+            password: this.state.password,
           },
         }),
         headers: {
@@ -88,6 +92,26 @@ export default class NewRepoPage extends React.Component<{}, RepoState> {
               label="URL"
               value={this.state.url}
               required={true}
+              hint="Relative path of your repo <username|org>/<repo_name>"
+            />
+            <FormInput
+              wrapperClass="form-group"
+              onChange={this.handleChange}
+              name="username"
+              label="Github Username"
+              value={this.state.username}
+              required={true}
+              hint="Username will not be saved"
+            />
+            <FormInput
+              wrapperClass="form-group"
+              onChange={this.handleChange}
+              name="password"
+              type="password"
+              label="Github Password"
+              value={this.state.password}
+              required={true}
+              hint="Password will not be saved"
             />
             <Link to="/" className="btn btn-light">Cancel</Link> &nbsp;
             <input type="submit" value="Submit" className="btn btn-primary" />

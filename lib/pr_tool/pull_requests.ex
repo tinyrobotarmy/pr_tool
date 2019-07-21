@@ -4,7 +4,7 @@ defmodule PrTool.PullRequests do
   """
 
   import Ecto.Query, warn: false
-  alias PrTool.Repo
+  alias PrTool.{FormatHelper, Repo}
 
   alias PrTool.PullRequests.PullRequest
 
@@ -175,5 +175,25 @@ defmodule PrTool.PullRequests do
   """
   def change_pull_request(%PullRequest{} = pull_request) do
     PullRequest.changeset(pull_request, %{})
+  end
+
+  def attrs_from_github_pr(github_pr, git_repo_id) do
+    %{
+      external_id: github_pr.id,
+      created_at: github_pr.created_at,
+      closed_at: github_pr.closed_at,
+      merged_at: github_pr.merged_at,
+      git_repo_id: git_repo_id,
+      title: github_pr.title,
+      author: github_pr.user.login,
+      labels: FormatHelper.label_names(github_pr),
+      reviewers: Enum.count(github_pr.requested_reviewers),
+      commits: github_pr.commits,
+      comments: github_pr.comments + github_pr.review_comments,
+      changed_files: github_pr.changed_files,
+      additions: github_pr.additions,
+      deletions: github_pr.deletions,
+      days_to_merge: FormatHelper.days_between(github_pr.created_at, github_pr.merged_at),
+    }
   end
 end
