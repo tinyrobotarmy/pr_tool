@@ -1,0 +1,23 @@
+fieldset.submit-btns {
+  margin-bottom: 0;
+}
+
+.btns-with-reset {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btns-with-reset button[type=submit] {
+  flex: 1;
+}
+
+.btns-with-reset__cancel {
+  margin: 0;
+  margin-left: 1em;
+}
+
+.btns-with-reset__cancel a:hover {
+  color: #eb1238;
+}

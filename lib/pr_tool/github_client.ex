@@ -2,9 +2,6 @@ defmodule PrTool.GithubClient do
 
   alias PrTool.LinkManager
 
-  @github_base_url "https://github.service.anz/api/v3/repos/"
-  # @github_base_url "https://api.github.com/repos/"
-
   def get_pulls(git_repo, username, password) do
     HTTPoison.start
     git_repo.url
@@ -18,11 +15,11 @@ defmodule PrTool.GithubClient do
   end
 
   defp request_all_url(repo_name) do
-    "#{@github_base_url}#{repo_name}/pulls?state=all"
+    "#{Application.get_env(:pr_tool, :github_api_url)}repos/#{repo_name}/pulls?state=all" |> IO.inspect
   end
 
   defp request_open_url(repo_name) do
-    "#{@github_base_url}#{repo_name}/pulls"
+    "#{Application.get_env(:pr_tool, :github_api_url)}repos/#{repo_name}/pulls"
   end
 
   defp append_pulls(nil, pulls, _opts), do: pulls

@@ -1,0 +1,22 @@
+.form-wrapper label {
+  padding-top: 2em;
+  padding-bottom: 0.5em;
+  display: block;
+}
+
+.form-wrapper-label__required::after {
+  content: '*';
+  color: #4a90e2; 
+  display: inline-block;
+  margin-left: 0.25em;
+  font-weight: normal;
+}
+
+.form-wrapper__errors * {
+  color: #eb1238;
+  border-color: #eb1238
+} 
+
+.form-wrapper__errors .form-wrapper-label__required::after {
+  color: #eb1238;
+}

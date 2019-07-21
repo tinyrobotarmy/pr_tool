@@ -20,9 +20,10 @@ defmodule Mix.Tasks.Load do
 
   defp find_or_save_repo(repo_name) do
     case GitRepos.get_git_repo_by_name(repo_name) do
-      git_repo -> git_repo
       nil ->
         {:ok, git_repo} = GitRepos.create_git_repo(%{name: repo_name, url: repo_name})
+        git_repo
+      git_repo ->
         git_repo
     end
 
