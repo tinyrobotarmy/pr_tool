@@ -13,7 +13,7 @@ export default class Root extends React.Component {
     return (
       <>
         <BrowserRouter>
-        <Header />
+          <Header />
           <Switch>
             <Route exact path="/repos/new" component={ NewRepoPage } />
             <Route exact path="/repos/:id" component={ RepoPage } />

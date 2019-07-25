@@ -13,7 +13,7 @@ defmodule PrToolWeb.GitRepoController do
 
   def create(conn, %{"git_repo" => %{"username" => username, "password" => password, "name" => name, "url" => url}}) do
     with {:ok, %GitRepo{} = git_repo} <- GitRepos.create_git_repo(%{"name" => name, "url" => url}) do
-      load_pulls(git_repo, username, password)
+      Task.async(fn -> load_pulls(git_repo, username, password) end)
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.git_repo_path(conn, :show, git_repo))

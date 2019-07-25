@@ -1,5 +1,5 @@
 defmodule PrTool.GithubClient do
-
+  require Logger
   alias PrTool.LinkManager
 
   def get_pulls(git_repo, username, password) do
@@ -10,7 +10,9 @@ defmodule PrTool.GithubClient do
   end
 
   def get_detail(url, username, password) do
+    Logger.info "loading #{url}"
     response = HTTPoison.get!(url, [], get_opts(username, password))
+    Logger.info "loaded"
     Poison.decode!(response.body, keys: :atoms)
   end
 
