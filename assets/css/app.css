@@ -13,3 +13,16 @@
   padding: 0.5em;
   border-radius: 3px;
 }
+
+.alert p {
+  text-align: center;
+}
+
+.closer {
+  opacity: 0.5;
+  cursor: pointer;
+  float: right;
+  font-size: 1em;
+  line-height: 1em;
+  font-weight: 700;
+}

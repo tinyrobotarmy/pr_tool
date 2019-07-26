@@ -58,6 +58,9 @@ export default class NewRepoPage extends React.Component<{}, RepoState> {
         },
       }).then(response => {
         this.props.history.push('/');
+        window.flash(`Your repo has been created, loading Pulll Requests.
+                      This can take a few minutes or more
+                      depending on how many PRs there are`, 'success')
       })
   }
 
