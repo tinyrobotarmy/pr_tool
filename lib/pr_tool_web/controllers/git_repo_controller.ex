@@ -2,7 +2,8 @@ defmodule PrToolWeb.GitRepoController do
   use PrToolWeb, :controller
 
   alias PrTool.GitRepos.GitRepo
-  alias PrTool.{GithubClient, GitRepos, PullRequests}
+  alias PrTool.PullRequests.PullRequestManager
+  alias PrTool.{GitRepos, PullRequests}
 
   action_fallback PrToolWeb.FallbackController
 
@@ -13,7 +14,7 @@ defmodule PrToolWeb.GitRepoController do
 
   def create(conn, %{"git_repo" => %{"username" => username, "password" => password, "name" => name, "url" => url}}) do
     with {:ok, %GitRepo{} = git_repo} <- GitRepos.create_git_repo(%{"name" => name, "url" => url}) do
-      Task.async(fn -> load_pulls(git_repo, username, password) end)
+      Task.async(fn -> PullRequestManager.load_pulls(git_repo, username, password) end)
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.git_repo_path(conn, :show, git_repo))
@@ -47,18 +48,5 @@ defmodule PrToolWeb.GitRepoController do
     with {:ok, %GitRepo{}} <- GitRepos.delete_git_repo(git_repo) do
       send_resp(conn, :no_content, "")
     end
-  end
-
-  defp load_pulls(git_repo, username, password) do
-    git_repo
-    |> GithubClient.get_pulls(username, password)
-    |> Enum.each(&create_pr(&1, username, password, git_repo))
-  end
-
-  defp create_pr(shallow_pr, username, password, git_repo) do
-    shallow_pr.url
-    |> GithubClient.get_detail(username, password)
-    |> PullRequests.attrs_from_github_pr(git_repo.id)
-    |> PullRequests.create_pull_request
   end
 end

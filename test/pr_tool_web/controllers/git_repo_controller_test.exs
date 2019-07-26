@@ -24,7 +24,7 @@ defmodule PrToolWeb.GitRepoControllerTest do
 
   describe "create git_repo" do
     test "renders git_repo when data is valid", %{conn: conn} do
-      attrs = Factory.all_git_repo_attributes()
+      attrs = Map.merge(%{"username" => "test", "password" => "test", }, Factory.all_git_repo_attributes())
       conn = post(conn, Routes.git_repo_path(conn, :create), git_repo: attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
@@ -44,7 +44,8 @@ defmodule PrToolWeb.GitRepoControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.git_repo_path(conn, :create), git_repo: @invalid_attrs)
+      attrs = Map.merge(%{"username" => "test", "password" => "test", }, @invalid_attrs)
+      conn = post(conn, Routes.git_repo_path(conn, :create), git_repo: attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
