@@ -8,8 +8,8 @@ about Pull Requests in your Github repository.
 * Create and migrate your database with `mix ecto.setup`
 * Install Node.js dependencies with `cd assets && npm install`
 
-After you have istalled it using the commands above you will need to use the mix task to pull in the details about
-your repo's pull request simply use:
+You can now load the pull requests from the web UI when you create the repo. Alternatively there is a mix task that
+can do it also:
 
 `mix load <repo_name>`
 
@@ -25,7 +25,7 @@ Repo
 
 
 ## TODO
-* Add a UI for loading git repo
+* ~~Add a UI for loading git repo~~
 * Add a UI for cleaning old data
-* Ensure that all PR data is removed before repo is loaded a second time
+* ~~Ensure that all PR data is removed before repo is loaded a second time~~
 * Improve loading PRs so that future loads only add PRs that have changed
