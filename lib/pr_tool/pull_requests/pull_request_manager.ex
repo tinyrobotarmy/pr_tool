@@ -13,4 +13,11 @@ defmodule PrTool.PullRequests.PullRequestManager do
     |> PullRequests.attrs_from_github_pr(git_repo.id)
     |> PullRequests.create_pull_request
   end
+
+  defp find_or_create_pr(shallow_pr, username, password, git_repo) do
+    shallow_pr.url
+    |> GithubClient.get_detail(username, password)
+    |> PullRequests.attrs_from_github_pr(git_repo.id)
+    |> PullRequests.create_pull_request
+  end
 end

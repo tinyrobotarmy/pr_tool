@@ -112,6 +112,18 @@ defmodule PrTool.PullRequests do
   """
   def get_pull_request!(id), do: Repo.get!(PullRequest, id)
 
+  def find_pull_request_by_external(git_repo_id, external_id) do
+    git_repo_id
+    |> find_by_external_query(external_id)
+    |> Repo.one()
+  end
+
+  defp find_by_external_query(git_repo_id, external_id) do
+    from pr in PullRequest,
+      where: pr.git_repo_id == ^git_repo_id,
+      where: pr.external_id == ^external_id
+  end
+
   @doc """
   Creates a pull_request.
 
