@@ -4,6 +4,8 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import Main from '../components/Main'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import ReactTooltip from 'react-tooltip'
 
 const initialState = {
   repos: [],
@@ -77,7 +79,7 @@ export default class HomePage extends React.Component<{}, HomeState> {
                 <tr>
                   <th>Repository Name</th>
                   <th>URL</th>
-                  <th>Actions</th>
+                  <th className="actions">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -89,12 +91,21 @@ export default class HomePage extends React.Component<{}, HomeState> {
                           <Link to={`repos/${repo.id}`}>{ repo.name }</Link>
                         </td>
                         <td>{ repo.url }</td>
-                        <td>
+                        <td className="actions">
                           <a
                             href={`http://localhost:4000/api/git_repos/${repo.id}`}
                             className="a-link"
+                            data-tip="Delete Repo"
                             onClick={this.handleDelete}>
-                            Delete
+                            <FontAwesomeIcon icon="trash" title="delete repo"/>
+                          </a>
+                          <ReactTooltip place="top" type="dark" effect="float"/>
+                          <a
+                            href={`/repos/${repo.id}/reload`}
+                            data-tip="Reload PRs"
+                            className="a-link">
+                            <FontAwesomeIcon icon="sync" title="reload PRs" />
+                            <ReactTooltip place="top" type="dark" effect="float"/>
                           </a>
                         </td>
                       </tr>

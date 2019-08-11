@@ -8,6 +8,7 @@ import Flash from './components/Flash'
 import HomePage from './pages'
 import RepoPage from './pages/Repo';
 import NewRepoPage from './pages/NewRepo';
+import ReloadRepoPage from './pages/ReloadRepo';
 
 export default class Root extends React.Component {
   public render(): JSX.Element {
@@ -18,6 +19,7 @@ export default class Root extends React.Component {
           <Header />
           <Switch>
             <Route exact path="/repos/new" component={ NewRepoPage } />
+            <Route exact path="/repos/:id/reload" component={ ReloadRepoPage } />
             <Route exact path="/repos/:id" component={ RepoPage } />
             <Route exact path="/" component={HomePage} />
           </Switch>

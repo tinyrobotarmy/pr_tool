@@ -20,6 +20,8 @@ defmodule PrToolWeb.Router do
     resources "/git_repos", GitRepoController, except: [:new, :edit] do
       resources "/pull_requests", PullRequestController, only: [:index, :show]
     end
+
+    post "/git_repos/:id/reload", GitRepoController, :reload
   end
 
   scope "/", PrToolWeb do

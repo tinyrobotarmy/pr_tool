@@ -22,6 +22,15 @@ defmodule PrToolWeb.GitRepoController do
     end
   end
 
+  def reload(conn, %{"id" => id, "git_repo" => %{"username" => username, "password" => password}}) do
+    git_repo = GitRepos.get_git_repo!(id)
+    Task.async(fn -> PullRequestManager.load_pulls(git_repo, username, password) end)
+    conn
+    |> put_status(:created)
+    |> put_resp_header("location", Routes.git_repo_path(conn, :show, git_repo))
+    |> render("summary.json", git_repo: git_repo)
+  end
+
   def show(conn, %{"id" => id}) do
     git_repo = GitRepos.get_git_repo!(id)
     series = PullRequests.as_time_series(git_repo.id)

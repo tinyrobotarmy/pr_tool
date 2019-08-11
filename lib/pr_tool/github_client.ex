@@ -17,7 +17,7 @@ defmodule PrTool.GithubClient do
   end
 
   defp request_all_url(repo_name) do
-    "#{Application.get_env(:pr_tool, :github_api_url)}repos/#{repo_name}/pulls?state=all" |> IO.inspect
+    "#{Application.get_env(:pr_tool, :github_api_url)}repos/#{repo_name}/pulls?state=all"
   end
 
   defp request_open_url(repo_name) do

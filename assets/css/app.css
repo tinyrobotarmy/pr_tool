@@ -26,3 +26,11 @@
   line-height: 1em;
   font-weight: 700;
 }
+
+.actions {
+  text-align: right;
+}
+
+.actions a {
+  margin-right: 0.5em;
+}

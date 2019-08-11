@@ -6,10 +6,10 @@ import '../css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash,faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faTrash,faEdit, faSync } from '@fortawesome/free-solid-svg-icons'
 import Bus from './Utils/Bus';
 
-library.add(faTrash,faEdit)
+library.add(faTrash,faEdit,faSync)
 // webpack automatically bundles all modules in your
 // entry points. Those entry points can be configured
 // in "webpack.config.js".

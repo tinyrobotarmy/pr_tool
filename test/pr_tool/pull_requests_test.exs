@@ -25,8 +25,16 @@ defmodule PrTool.PullRequestsTest do
   describe "find_pull_request_by_external_id" do
     setup [:single_pr]
 
-    test "returns the pull_request with given id", %{pr: pr} do
+    test "returns the pull_request with given external_id and git_repo_id", %{pr: pr} do
       assert PullRequests.find_pull_request_by_external(pr.git_repo_id, pr.external_id) == pr
+    end
+
+    test "returns nil when external_id is incorrect", %{pr: pr} do
+      assert PullRequests.find_pull_request_by_external(pr.git_repo_id, 1029999) == nil
+    end
+
+    test "returns nil when git_repo_id is incorrect", %{pr: pr} do
+      assert PullRequests.find_pull_request_by_external(123455, pr.external_id) == nil
     end
   end
 

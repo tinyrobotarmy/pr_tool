@@ -74,5 +74,5 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :pr_tool,
-  # github_api_url: "https://github.service.anz/api/v3/"
-  github_api_url: "https://api.github.com/"
+  github_api_url: "https://github.service.anz/api/v3/"
+  # github_api_url: "https://api.github.com/"
