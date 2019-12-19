@@ -5,9 +5,10 @@ import Main from '../components/Main'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import '../../../node_modules/react-vis/dist/style.css';
-import {FlexibleWidthXYPlot, LineMarkSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, Crosshair} from 'react-vis';
+import {FlexibleWidthXYPlot, LineMarkSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, Crosshair, DiscreteColorLegend} from 'react-vis';
 
 import moment from 'moment'
+// import DiscreteColorLegend from 'legends/discrete-color-legend';
 
 const MARGIN = {
   left: 50,
@@ -15,6 +16,11 @@ const MARGIN = {
   bottom: 100,
   top: 20
 };
+
+const ITEMS = [
+  {title: 'Comments', color: '#21a03a', strokeWidth: 4},
+  {title: 'Reviews', color: '#eed731', strokeWidth: 4},
+];
 
 interface SeriesItem {
   x: any;
@@ -283,6 +289,7 @@ export default class RepoPage extends React.Component<{}, RepoState> {
           </div>
           <div className="col-sm-6">
           <h5 className="sub-head">Rolling 1 month average of comments and reviewers</h5>
+          <DiscreteColorLegend orientation="horizontal" width={300} items={ITEMS} />
           </div>
         </div>
         <div className="row">
